@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Hobby School Election Map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link rel = "stylesheet" type = "text/css" href = "style.css" />
+</head>
+
+<body>
+
+
+<div id='map'></div>
+
+<div class='map-overlay top'>
+    <div class='map-overlay-inner'>
+        <h1>Harris County Historical Election Map</h1>
+        <input id="layer_toggle" type="checkbox" data-toggle="toggle" data-on="Downballot" data-off="Pres./Senate" checked>
+        <h2 style='margin-top: 10px; margin-bottom: -5px'>Election year:</h2>
+        <label id='year' style='font-size: 14px;'></label>
+        <input id='slider' type='range' min='0' max='9' step='1' value='0' class="slider"/>
+    </div>
+    <div class='map-overlay-inner'>
+        <div id='legend' class='legend'>
+            <div class='bar'></div>
+            <p style='margin: 10px 0px 10px 0px;'>
+              <span style='float:left; margin-top: -10px; font-size: 12px;'>100% Republican</span> 
+              <span style='float:right; margin-top: -10px; font-size: 12px;'>100% Democrat</span>
+            </p>
+        </div>
+    </div>
+
+    <div class='map-overlay-inner' id='features'><h2>Precinct in detail:</h2>
+      <div id='pd'><p>Hover over a precinct!</p>
+      </div>
+    </div>
+</div>
+
+
+
+<!-- MAP SCRIPT -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script src='//d3js.org/d3.v5.min.js' charset='utf-8'></script>
+<script type="text/javascript">
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZGF2aWRtY2NsIiwiYSI6ImNqN25wMWR2ZjBnNjgzM3U5ZzM4dmo5dzYifQ.TPzRJNRKMfbfrl6G_rS79w';
+
+var map = new mapboxgl.Map({
+  container: 'map', // container id
+  style: 'mapbox://styles/mapbox/light-v10', //stylesheet location
+  center: [-95.3698, 29.7604], // starting position
+  zoom: 9 // starting zoom
+});
+
+var hoveredStateId =  null;
+
+var dbYears = [
+  '2000',
+  '2002',
+  '2004',
+  '2006',
+  '2008',
+  '2010',
+  '2012',
+  '2014',
+  '2016',
+  '2018'
+]
+
+var spYears = [
+  '2000',
+  '2004',
+  '2008',
+  '2012',
+  '2016',
+  '2018'
+]
+
+//Define functions --------------------------------------------------------------------
+function filterBy(year, currentLayer, years) {
+    var exists = ['has']
+    var filters = ["all",['==', 'year_array', year], ['==', 'election', currentLayer]];
+    //console.log(filters);
+    map.setFilter('fill-layer', filters);
+     
+    // Set the label to the year
+    document.getElementById('year').textContent = years[year];
+}
+
+function addHover(e, datasource) {
+  if (e.features.length > 0) {
+      if (hoveredStateId) {
+        map.removeFeatureState({
+          source: datasource,
+          id: hoveredStateId
+        });
+      }
+      hoveredStateId = e.features[0].id;
+      console.log(hoveredStateId);
+
+      map.setFeatureState({
+        source: datasource,
+        id: hoveredStateId,
+      }, {
+        hover: true
+      });
+    }
+}
+
+function removeHover(datasource) {
+  if (hoveredStateId) {
+    map.setFeatureState({source: datasource, id: hoveredStateId}, { hover: false});
+  }
+  hoveredStateId =  null;
+}
+
+
+//Load map --------------------------------------------------------------------
+map.on('load', function() {
+
+  d3.json("mapdata.json").then(function(data) {
+
+    console.log(data);
+
+    map.addSource('mapdata', {
+      "type": "geojson",
+      "data": data,
+      'generateId': true
+    });
+
+    map.addLayer({
+      'id': 'fill-layer',
+      'type': 'fill',
+      'source': 'mapdata',
+      'layout': {'visibility': 'visible'},
+      'paint': {
+        'fill-color': 
+        ['case',
+          ['!=', ['get', 'diff'], null],
+          ['interpolate', ['linear'],
+            ['get', 'diff'],
+            -100, "#b2182b",
+            -50, "#ef8a62",
+            -25, "#fddbc7",
+            0, "#f7f7f7",
+            25, "#d1e5f0",
+            50, "#67a9cf",
+            100, "#2166ac"],
+          'rgba(255, 255, 255, 0)'
+        ],
+        'fill-outline-color': ["case",
+          ["boolean", ["feature-state", "hover"], false],
+          'black',
+          'white'
+          ], 
+        'fill-opacity': ["case",
+          ["boolean", ["feature-state", "hover"], false],
+          0.9,
+          0.5
+          ] 
+      }
+    });
+
+
+  // Slider and filters --------------------------------------------------------------------
+    //Define initial state
+    var currentYear = 0;
+    var currentLayer = "db";
+    var yearsList = dbYears;
+
+    filterBy(currentYear, currentLayer, yearsList);
+
+  //Switch election type --------------------------------------------------------------------
+
+    $('#layer_toggle').on('change', function() {
+      if ($(this).prop('checked')) {
+
+        var currentLayer = "db";
+        var yearsList = dbYears;
+        //reset slider
+        document.getElementById('slider').value = 0;
+        document.getElementById('slider').max = 9;
+
+      } else {
+
+        var currentLayer = "sp";
+        var yearsList = spYears;
+        //adjust slider
+        document.getElementById('slider').value = 0;
+        document.getElementById('slider').max = 5;
+
+      }
+
+      filterBy(currentYear, currentLayer, yearsList);
+        
+    });
+
+    
+  //Year slider --------------------------------------------------------------------
+    document.getElementById('slider').addEventListener('input', function(e) {
+      if (document.getElementById('layer_toggle').checked) {
+        var currentLayer = "db";
+        var yearsList = dbYears;
+      } else {
+        var currentLayer = "sp";
+        var yearsList = spYears;
+      }
+      
+      var currentYear = parseInt(e.target.value, 10);
+
+      filterBy(currentYear, currentLayer, yearsList);
+
+    });
+
+
+  // Create a popup, but don't add it to the map yet.
+    var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    });
+     
+
+  //Mouse events --------------------------------------------------------------------
+    map.on('mouseenter', 'fill-layer', function(e) {
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = 'pointer';
+       
+    });
+
+    map.on('mousemove', "fill-layer", function(e) {
+
+      addHover(e, 'mapdata');
+
+      map.getCanvas().style.cursor = 'pointer';
+
+      var shape = map.queryRenderedFeatures(e.point, {
+        layers: ['fill-layer']
+      });
+
+      if (shape.length > 0) {
+        document.getElementById('pd').innerHTML = '<h3><strong>Precinct #' + shape[0].properties.Pct + '</strong></h3><p>' + shape[0].properties.description + '</p>';
+      } else {
+        document.getElementById('pd').innerHTML = '<p>Hover over a precinct!</p>';
+      }
+
+      console.log(shape.length);
+
+    });
+
+
+    map.on('mouseleave', 'fill-layer', function() {
+      map.getCanvas().style.cursor = '';
+
+      removeHover('mapdata');
+
+      document.getElementById('pd').innerHTML = '<p>Hover over a precinct!</p>';
+
+    });
+
+  });
+
+});
+
+
+</script>
+
+
+</body>
+</html>

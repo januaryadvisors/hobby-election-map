@@ -1,0 +1,142 @@
+body { 
+	margin:0; padding:0; 
+}
+
+h2, h3 {
+  /*margin: 10px;*/
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+  margin: 0 0 0 0;
+}
+
+p {
+  font-size: 12px;
+  text-align: left;
+  margin: 0 0 0 0;
+}
+
+h1 {
+	line-height: 1;
+	margin-top: 5px;
+}
+
+#map { 
+	position:absolute; top:0; bottom:0; width:100%;
+}
+
+.map-overlay {
+	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	position: absolute;
+	width: 25%;
+	top: 0;
+	left: 0;
+	padding: 5px;
+}
+ 
+.map-overlay .map-overlay-inner {
+	background: rgba(255, 255, 255, 0.8);
+	box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
+	border-radius: 3px;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+ 
+.map-overlay h2 {
+	line-height: 24px;
+	display: block;
+	margin: 0 0 5px;
+}
+ 
+.map-overlay .legend .bar {
+	height: 10px;
+	width: 100%;
+	background: linear-gradient(to right, #b2182b,#ef8a62,#fddbc7, #f7f7f7,#d1e5f0,#67a9cf, #2166ac);
+}
+ 
+.map-overlay input {
+	background-color: transparent;
+	display: inline-block;
+	width: 100%;
+	position: relative;
+	margin: 0;
+	cursor: ew-resize;
+}
+
+.map-popup {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+
+#features {
+  bottom: 0;
+  height: 100px;
+  margin-top: 20px;
+}
+
+
+.btn-primary, .btn-primary.active, .btn-default.active, .open>.dropdown-toggle.btn-default {
+    color: #ffffff;
+    background-color: #67a9cf;
+    background-image: none;
+    border-color: #adadad;
+}
+
+.btn-primary:hover, .btn-default.active:hover {
+    color: #ffffff;
+    background-color: #2166ac;
+    border-color: #adadad;
+}
+
+
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+#slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 10px; /* Specified height */
+  background-color: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  background: #67a9cf; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  background: #67a9cf; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+input[type=range]::-moz-focus-outer {
+    border: 0;
+    }
