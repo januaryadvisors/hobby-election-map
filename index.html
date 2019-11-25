@@ -28,14 +28,16 @@
         <div id='legend' class='legend'>
             <div class='bar'></div>
             <p style='margin: 10px 0px 10px 0px;'>
-              <span style='float:left; margin-top: -10px; font-size: 12px;'>100% Republican</span> 
-              <span style='float:right; margin-top: -10px; font-size: 12px;'>100% Democrat</span>
+              <span class='big' style='float:left; margin-top: -10px; font-size: 12px;'>100% Republican</span> 
+              <span class='big' style='float:right; margin-top: -10px; font-size: 12px;'>100% Democrat</span>
+              <span class='small' style='float:left; '>100% R</span> 
+              <span class='small' style='float:right; '>100% D</span>
             </p>
         </div>
     </div>
 
-    <div class='map-overlay-inner' id='features'><h2>Precinct in detail:</h2>
-      <div id='pd'><p>Hover over a precinct!</p>
+    <div class='map-overlay-inner' id='features'>
+      <div id='pd'><h2>Hover over a precinct!</h2>
       </div>
     </div>
 </div>
@@ -243,9 +245,9 @@ map.on('load', function() {
       });
 
       if (shape.length > 0) {
-        document.getElementById('pd').innerHTML = '<h3><strong>Precinct #' + shape[0].properties.Pct + '</strong></h3><p>' + shape[0].properties.description + '</p>';
+        document.getElementById('pd').innerHTML = '<h2>Precinct #' + shape[0].properties.Pct + '</h2><h2>' + shape[0].properties.description + '</h2>';
       } else {
-        document.getElementById('pd').innerHTML = '<p>Hover over a precinct!</p>';
+        document.getElementById('pd').innerHTML = '<h2>Hover over a precinct!</h2>';
       }
 
       console.log(shape.length);
@@ -258,7 +260,7 @@ map.on('load', function() {
 
       removeHover('mapdata');
 
-      document.getElementById('pd').innerHTML = '<p>Hover over a precinct!</p>';
+      document.getElementById('pd').innerHTML = '<h2>Hover over a precinct!</h2>';
 
     });
 

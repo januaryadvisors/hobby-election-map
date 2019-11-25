@@ -4,7 +4,7 @@ body {
 
 h2, h3 {
   /*margin: 10px;*/
-  font-size: 1.2em;
+  font-size: 14px;
 }
 
 h3 {
@@ -140,3 +140,87 @@ h1 {
 input[type=range]::-moz-focus-outer {
     border: 0;
     }
+
+.small {
+	visibility: hidden;
+}
+
+
+
+
+@media only screen and (max-width: 800px) {
+	h1 {
+		font-size: 18px;
+	}
+	.map-overlay {
+		width: 30%;
+	}
+
+	.small {
+	    visibility: visible;
+	    margin-top: -20px;
+	}
+
+	.big {
+		visibility: hidden;
+	}
+
+	#features {
+		height: 80px;
+	}
+
+	#features h2 {
+		line-height: 16px;
+	}
+ }
+
+
+
+@media only screen and (max-width: 415px) {
+	.map-overlay {
+		width: 40%;
+	}
+
+	.small {
+	    visibility: visible;
+	    font-size: 14px;
+	    margin-top: -30px;
+	}
+
+
+ }
+
+
+@media only screen and (max-width: 375px) {
+	#features {
+		height: 60px;
+	}
+
+	h1 {
+		font-size: 16px;
+	}
+
+	h2 {
+		font-size: 12px;
+		line-height: 12px;
+	}
+
+	#features h2 {
+		font-size: 12px;
+		line-height: 12px;
+	}
+
+	.map-overlay {
+		width: 40%;
+	}
+
+	.small {
+		font-size: 12px;
+	    visibility: visible;
+	    margin-top: -30px;
+	}
+
+	.big {
+		visibility: hidden;
+	}
+ }
