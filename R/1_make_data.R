@@ -70,12 +70,25 @@ sf <- read_sf(here::here("data", "Harris_County_Voting_Precincts.shp")) %>%
   mutate(Pct = as.numeric(PRECINCT)) %>% 
   dplyr::select(Pct, geometry)
 
-#Merge
+#Merge and create main geojson
 combined <- left_join(sf, df, by="Pct") %>% 
   geojson_json(.) %>% ms_simplify(.) 
 
 geojson_write(combined, file = here::here("data", paste0("mapdata", ".json")))
 geojson_write(combined, file = here::here(paste0("mapdata", ".json")))
+
+
+#Create flyTo list w/ ID and centroids
+centroids <- st_centroid(sf) %>%
+  arrange(Pct) %>% 
+  mutate(
+    lon = unlist(map(geometry,1)),
+    lat = unlist(map(geometry,2)),
+    description = paste0("<strong>Precinct ", Pct, "</strong>")
+  ) %>% 
+  st_drop_geometry() %>% 
+  write_csv(here::here("precinct_centroids.csv"))
+
 
 
 
