@@ -135,7 +135,7 @@ function addHover(e, datasource) {
         });
       }
       hoveredStateId = e.features[0].id;
-      console.log(hoveredStateId);
+      //console.log(hoveredStateId);
 
       map.setFeatureState({
         source: datasource,
@@ -159,7 +159,18 @@ map.on('load', function() {
 
   d3.json("mapdata.json").then(function(data) {
 
-    console.log(data);
+    //console.log(data);
+
+    var layers = map.getStyle().layers;
+    console.log(layers);
+    // Find the index of the first symbol layer in the map style
+    var firstSymbolId;
+    for (var i = 0; i < layers.length; i++) {
+      if (layers[i].id === 'road-primary') {
+      firstSymbolId = layers[i].id;
+        break;
+      }
+    }
 
 
     map.addSource('mapdata', {
@@ -195,15 +206,16 @@ map.on('load', function() {
         'fill-outline-color': ["case",
           ["boolean", ["feature-state", "hover"], false],
           'black',
-          'black'
+          'gray'
           ], 
         'fill-opacity': ["case",
           ["boolean", ["feature-state", "hover"], false],
           0.9,
-          0.5
+          0.6
           ] 
       }
-    });
+    },
+firstSymbolId);
 
     map.addControl(new mapboxgl.NavigationControl());
 
@@ -226,7 +238,7 @@ map.on('load', function() {
 				        d.lon = +d.lon;
 				    });
 
-	  	console.log(csv);
+	  	//console.log(csv);
 
 	  	//Filter csv based on selection and flyTo
 	  	var a = document.getElementsByName('search')[0];
@@ -243,7 +255,7 @@ map.on('load', function() {
 	  	var lon = filteredData.map(function(d) {return d.lon});
 			var lat = filteredData.map(function(d) {return d.lat});
 
-	  	console.log(description[0]);
+	  	//console.log(description[0]);
 			//flyTo that precinct
 	  		map.flyTo({
 	  			center: [
@@ -399,7 +411,7 @@ map.on('load', function() {
         document.getElementById('pd').innerHTML = '<h2>Hover over a precinct!</h2>';
       }
 
-      console.log(shape.length);
+      //console.log(shape.length);
 
     });
 
