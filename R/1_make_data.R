@@ -10,7 +10,8 @@ library(sp)
 wgs84<-CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
 
 #2020 data
-data2020 <- readRDS(here::here("data", "data-2020-clean.rds"))
+data2020 <- readRDS(here::here("data", "data-2020-clean.rds")) %>% 
+  mutate(Pct = as.numeric(Pct))
 
 #Election data
 df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Harris County.xlsx")) %>% 
@@ -76,8 +77,8 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
 #Precinct shapefile
 sf <- read_sf(here::here("data", "Harris_County_Voting_Precincts.shp")) %>% 
   st_as_sf() %>% st_transform(., wgs84) %>% 
-  #mutate(Pct = as.numeric(PRECINCT)) %>% 
-  dplyr::select(Pct=PRECINCT, geometry)
+  mutate(Pct = as.numeric(PRECINCT)) %>% 
+  dplyr::select(Pct, geometry)
 
 #Merge and create main geojson
 combined <- left_join(sf, df, by="Pct") %>% 
