@@ -21,17 +21,11 @@
     <div class='map-overlay-inner'>
         <h1>Harris County Historical Election Map</h1>
         <input id="layer_toggle" type="checkbox" data-toggle="toggle" data-on="Downballot" data-off="Pres./Senate" checked>
-<!--         <div class="tooltip">What's this?
-          <span class="tooltiptext">Toggle between Presidential/Senate and Downballot turnout</span>
-        </div>  -->
         <label class="tooltip">Click for more info.<input type="checkbox"><span>
-          Toggle between Presidential/Senate and Downballot turnout!
+          Toggle between Presidential/Senate and Downballot turnout.
         </span></label>
-<!--         <button class='btn' data-toggle="tooltip" data-placement="right" title = "info here!">
-          <i class="fa fa-info-circle"></i>
-        </button> -->
         <h2 style='margin-top: 10px; margin-bottom: -5px'>Election year (2000-2020):</h2>
-        <label id='year' style='font-size: 24px;'></label>
+        <label id='year' style='font-size: 48px; font-weight: bold;'></label>
         <input id='slider' type='range' min='0' max='10' step='1' value='0' class="slider"/>
         <button id="play-button">Play</button>
     </div>
@@ -48,14 +42,14 @@
     </div>
 
     <div class='map-overlay-inner' id='search'>
-      <div id='search-title'><h2>Search for a precinct (click enter)</h2>
+      <div id='search-title'><h3>Search for a precinct (click enter)</h3>
       	<input name="search" list = "search-list" />
       	<datalist id = "search-list"></datalist>
       </div>
     </div>
 
     <div class='map-overlay-inner' id='features'>
-      <div id='pd'><h2>Hover over a precinct!</h2>
+      <div id='pd'><h3>Hover over a precinct!</h3>
       </div>
     </div>
 
