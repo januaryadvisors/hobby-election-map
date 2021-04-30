@@ -9,6 +9,9 @@ library(sp)
 
 wgs84<-CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
 
+#2020 data
+data2020 <- readRDS(here::here("data", "data-2020-clean.rds"))
+
 #Election data
 df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Harris County.xlsx")) %>% 
   dplyr::select(-c(VAP_Anglo:`...13`)) %>% 
@@ -16,7 +19,11 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
     DB_Dem = ifelse(DB_Dem==".", NA, as.numeric(DB_Dem)),
     DB_Rep = ifelse(DB_Rep==".", NA, as.numeric(DB_Rep)),
     `Sen/Pre_Dem` = ifelse(`Sen/Pre_Dem`==".", NA, as.numeric(`Sen/Pre_Dem`)),
-    `Sen/Pre_Rep` = ifelse(`Sen/Pre_Rep`==".", NA, as.numeric(`Sen/Pre_Rep`)),
+    `Sen/Pre_Rep` = ifelse(`Sen/Pre_Rep`==".", NA, as.numeric(`Sen/Pre_Rep`))
+  ) %>% 
+  filter(Year!="2020") %>% 
+  rbind(., data2020) %>% 
+  mutate(
     DB_Dem_pct = DB_Dem/(DB_Dem+DB_Rep)*100,
     DB_Rep_pct = DB_Rep/(DB_Dem+DB_Rep)*100,
     `Sen/Pre_Dem_pct` = `Sen/Pre_Dem`/(`Sen/Pre_Dem`+`Sen/Pre_Rep`)*100,
@@ -41,7 +48,8 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
   dplyr::select(Pct, Year, db_diff, sp_diff, db_description, sp_description) %>% 
   gather(election, values, db_diff:sp_description) %>% 
   separate(election, into=c("election", "name"), sep="_") %>% 
-  filter(!is.na(values) & Year!="2020") %>% 
+  filter(!is.na(values)) %>% 
+  ungroup() %>% 
   spread(name, values) %>% 
   mutate(
     diff=as.numeric(diff)
@@ -58,6 +66,7 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
       Year==2012 & election=="sp" ~ 3,
       Year==2016 & election=="sp" ~ 4,
       Year==2018 & election=="sp" ~ 5,
+      Year==2020 & election=="sp" ~ 6,
       TRUE ~ year_array
     )
   )
@@ -67,8 +76,8 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
 #Precinct shapefile
 sf <- read_sf(here::here("data", "Harris_County_Voting_Precincts.shp")) %>% 
   st_as_sf() %>% st_transform(., wgs84) %>% 
-  mutate(Pct = as.numeric(PRECINCT)) %>% 
-  dplyr::select(Pct, geometry)
+  #mutate(Pct = as.numeric(PRECINCT)) %>% 
+  dplyr::select(Pct=PRECINCT, geometry)
 
 #Merge and create main geojson
 combined <- left_join(sf, df, by="Pct") %>% 
