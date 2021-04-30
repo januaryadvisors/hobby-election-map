@@ -10,8 +10,7 @@ library(sp)
 wgs84<-CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
 
 #2020 data
-data2020 <- readRDS(here::here("data", "data-2020-clean.rds")) %>% 
-  mutate(Pct = as.numeric(Pct))
+data2020 <- readRDS(here::here("data", "data-2020-clean.rds"))
 
 #Election data
 df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Harris County.xlsx")) %>% 
@@ -25,10 +24,10 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
   filter(Year!="2020") %>% 
   rbind(., data2020) %>% 
   mutate(
-    DB_Dem_pct = DB_Dem/(DB_Dem+DB_Rep)*100,
-    DB_Rep_pct = DB_Rep/(DB_Dem+DB_Rep)*100,
-    `Sen/Pre_Dem_pct` = `Sen/Pre_Dem`/(`Sen/Pre_Dem`+`Sen/Pre_Rep`)*100,
-    `Sen/Pre_Rep_pct` = `Sen/Pre_Rep`/(`Sen/Pre_Dem`+`Sen/Pre_Rep`)*100,
+    DB_Dem_pct = ifelse(DB_Dem==0 & DB_Rep==0, NA, DB_Dem/(DB_Dem+DB_Rep)*100) ,
+    DB_Rep_pct = ifelse(DB_Dem==0 & DB_Rep==0, NA, DB_Rep/(DB_Dem+DB_Rep)*100),
+    `Sen/Pre_Dem_pct` = ifelse(`Sen/Pre_Dem`==0 & `Sen/Pre_Rep`==0, NA, `Sen/Pre_Dem`/(`Sen/Pre_Dem`+`Sen/Pre_Rep`)*100),
+    `Sen/Pre_Rep_pct` = ifelse(`Sen/Pre_Dem`==0 & `Sen/Pre_Rep`==0, NA, `Sen/Pre_Rep`/(`Sen/Pre_Dem`+`Sen/Pre_Rep`)*100),
     
     db_diff = DB_Dem_pct - DB_Rep_pct,
     sp_diff = `Sen/Pre_Dem_pct` - `Sen/Pre_Rep_pct`,
@@ -71,7 +70,7 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
       TRUE ~ year_array
     )
   )
-  #filter(!is.na(year_array) & Year!=2020)
+
   
 
 #Precinct shapefile

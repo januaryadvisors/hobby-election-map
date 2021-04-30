@@ -7,11 +7,12 @@ text
 
 "Harris County State Rep District 126.doc"
 
-text <- read_doc(here::here("data", "doc_data", paste0("Harris County State Rep District ", 146, ".doc")))%>% 
+text <- read_doc(here::here("data", "doc_data", paste0("Harris County State Rep District ", 150, ".doc")))%>% 
   str_replace_all(., "Pct\\.", "Pct") %>% 
   str_replace_all(., "Pct   ", "Pct ") %>%
   str_replace_all(., "Pct  ", "Pct ") %>%
   str_replace_all(., "2020E", "2020")
+
 text
 
 clean_doc <- function(.x) {
@@ -31,15 +32,29 @@ clean_doc <- function(.x) {
   no_voters7 <- str_extract_all(text, "\\d+(?= – No Registered)")[[1]]
   no_voters8 <- str_extract_all(text, "\\d+(?=     \\(1 Registered)")[[1]]
   no_voters9 <- str_extract_all(text, "\\d+(?= – 1 Republican)")[[1]]
-
+  no_voters10 <- str_extract_all(text, "\\d+(?=     No Reg)")[[1]]
+  no_voters11 <- str_extract_all(text, "\\d+(?= – 5 Reg)")[[1]]
+  no_voters12 <- str_extract_all(text, "\\d+(?=  - No registered voters)")[[1]]
+  no_voters13 <- str_extract_all(text, "\\d+(?= – No Voters)")[[1]]
+  no_voters14 <- str_extract_all(text, "\\d+(?=:  No registered voters)")[[1]]
+  no_voters15 <- str_extract_all(text, "\\d+(?= – One registered voter)")[[1]]
+  #no_voters16 <- str_extract_all(text, "\\d+(?= No registered)")[[1]]
+  
   precinct <- str_extract_all(text, "(?<=Pct )\\d+")[[1]] %>% 
     as.data.frame() %>% 
     dplyr::rename("precinct" = ".") %>% 
     filter(!(precinct %in% c(no_voters1, no_voters2, no_voters3,
                              no_voters4, no_voters5, no_voters6, 
-                             no_voters7, no_voters8, no_voters9
-                             ))) %>% 
+                             no_voters7, no_voters8, no_voters9,
+                             no_voters10, no_voters11, no_voters12, 
+                             no_voters13, no_voters14, no_voters15
+                             )) |
+             (precinct=="837") #District 134
+             ) %>% 
+    mutate(precinct = as.numeric(precinct)) %>% 
+    distinct(precinct) %>% 
     mutate(row_id = row_number())
+  
   
   data <- str_split(text, "\n")[[1]] %>% as.data.frame() %>% 
     clean_names() %>% 
@@ -63,7 +78,8 @@ clean_doc <- function(.x) {
       xx = str_replace_all(xx, "____", "_"),
       xx = str_replace_all(xx, "___", "_"),
       xx = str_replace_all(xx, "__", "_"),
-      xx = str_replace_all(xx, "2020_", "")
+      xx = str_replace_all(xx, "2020_", ""),
+      xx = str_replace_all(xx, "No_voters", "0")
     ) %>% 
     separate(xx, into = c("x1", "x2", "x3", "x4", "x5", "x6"), sep="_") %>% 
     left_join(., precinct) %>% 
@@ -76,14 +92,15 @@ clean_doc <- function(.x) {
   return(data)
 }
 
-test <- clean_doc(133)
+test <- clean_doc(150)
 
 docs <- lapply(c(126:135, 137:150), clean_doc)
 doc_data <- do.call(rbind, docs) %>% 
   mutate(
     `Sen/Pre_Dem` = ifelse(District==144 & Pct=="346", 0, `Sen/Pre_Dem`),
     `Sen/Pre_Rep` = ifelse(District==132 & Pct=="901", 0, `Sen/Pre_Rep`),
-    across(DB_Dem:`Sen/Pre_Rep`, as.numeric)
+    across(DB_Dem:`Sen/Pre_Rep`, as.numeric),
+    Pct = as.numeric(Pct)
   ) %>% 
   group_by(Year, Pct) %>% 
   summarise(

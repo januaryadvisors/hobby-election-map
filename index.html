@@ -30,9 +30,9 @@
 <!--         <button class='btn' data-toggle="tooltip" data-placement="right" title = "info here!">
           <i class="fa fa-info-circle"></i>
         </button> -->
-        <h2 style='margin-top: 10px; margin-bottom: -5px'>Election year (2000-2018):</h2>
+        <h2 style='margin-top: 10px; margin-bottom: -5px'>Election year (2000-2020):</h2>
         <label id='year' style='font-size: 24px;'></label>
-        <input id='slider' type='range' min='0' max='9' step='1' value='0' class="slider"/>
+        <input id='slider' type='range' min='0' max='10' step='1' value='0' class="slider"/>
         <button id="play-button">Play</button>
     </div>
     <div class='map-overlay-inner'>
@@ -347,7 +347,7 @@ firstSymbolId);
         yearsList = dbYears;
         //reset slider
         document.getElementById('slider').value = 0;
-        document.getElementById('slider').max = 9;
+        document.getElementById('slider').max = 10;
         sliderMax = 9;
 
       } else {
@@ -356,7 +356,7 @@ firstSymbolId);
         yearsList = spYears;
         //adjust slider
         document.getElementById('slider').value = 0;
-        document.getElementById('slider').max = 5;
+        document.getElementById('slider').max = 6;
         sliderMax = 5;
 
       }
