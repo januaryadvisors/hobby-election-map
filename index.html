@@ -402,9 +402,9 @@ firstSymbolId);
       });
 
       if (shape.length > 0) {
-        document.getElementById('pd').innerHTML = '<h2>Precinct #' + shape[0].properties.Pct + '</h2><h2>' + shape[0].properties.description + '</h2>';
+        document.getElementById('pd').innerHTML = '<h3>Precinct #' + shape[0].properties.Pct + '</h3><h3>' + shape[0].properties.description + '</h3>' + '<h3>Democratic vote: ' + shape[0].properties.dem_pct + '</h3>' + '<h3>Republican vote: ' + shape[0].properties.rep_pct + '</h3>';
       } else {
-        document.getElementById('pd').innerHTML = '<h2>Hover over a precinct!</h2>';
+        document.getElementById('pd').innerHTML = '<h3>Hover over a precinct!</h3>';
       }
 
       //console.log(shape.length);
@@ -417,7 +417,7 @@ firstSymbolId);
 
       removeHover('mapdata');
 
-      document.getElementById('pd').innerHTML = '<h2>Hover over a precinct to learn more!</h2>';
+      document.getElementById('pd').innerHTML = '<h3>Hover over a precinct to learn more!</h3>';
 
     });
 

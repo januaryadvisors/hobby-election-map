@@ -45,14 +45,19 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
       sp_diff==0 ~ paste0("Equal numbers of Democrats and Republicans")
     )
   ) %>% 
-  dplyr::select(Pct, Year, db_diff, sp_diff, db_description, sp_description) %>% 
+  dplyr::select(Pct, Year, db_diff, sp_diff, 
+                db_dem.pct=DB_Dem_pct, db_rep.pct=DB_Rep_pct, sp_dem.pct="Sen/Pre_Dem_pct", sp_rep.pct="Sen/Pre_Rep_pct",
+                db_description, sp_description) %>% 
   gather(election, values, db_diff:sp_description) %>% 
   separate(election, into=c("election", "name"), sep="_") %>% 
   filter(!is.na(values)) %>% 
   ungroup() %>% 
   spread(name, values) %>% 
   mutate(
-    diff=as.numeric(diff)
+    diff=as.numeric(diff),
+    dem.pct= paste0(round(as.numeric(dem.pct)), "%"),
+    rep.pct= paste0(round(as.numeric(rep.pct)), "%"),
+    
     ) %>% 
   arrange(Pct, election, Year) %>% 
   group_by(Pct, election) %>% 
@@ -69,7 +74,8 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
       Year==2020 & election=="sp" ~ 6,
       TRUE ~ year_array
     )
-  )
+  ) %>% 
+  dplyr::rename(dem_pct = dem.pct, rep_pct = rep.pct)
 
   
 
