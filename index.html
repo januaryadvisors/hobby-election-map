@@ -294,15 +294,6 @@ firstSymbolId);
     filterBy(currentYear, currentLayer, yearsList);
 
 
-  //interval
-    // var interval = d3.interval(function(){
-
-    //     currentYear = currentYear<sliderMax ? currentYear + 1 :0
-    //     document.getElementById('slider').value = currentYear;
-    //     filterBy(currentYear, currentLayer, yearsList);
-        
-    //   }, 1000);
-
   //Play button
   playButton.on("click", function() {
 
@@ -328,6 +319,7 @@ firstSymbolId);
     document.getElementById('slider').value = currentYear;
     //Update data
     filterBy(currentYear, currentLayer, yearsList);
+      
   }
 
 
@@ -402,7 +394,7 @@ firstSymbolId);
       });
 
       if (shape.length > 0) {
-        document.getElementById('pd').innerHTML = '<h3>Precinct #' + shape[0].properties.Pct + '</h3><h3>' + shape[0].properties.description + '</h3>' + '<h3>Democratic vote: ' + shape[0].properties.dem_pct + '</h3>' + '<h3>Republican vote: ' + shape[0].properties.rep_pct + '</h3>';
+        document.getElementById('pd').innerHTML = '<h3>Precinct #' + shape[0].properties.Pct + '</h3><h3>' + shape[0].properties.description + '</h3>' + '<h3>Democratic vote: ' + shape[0].properties.dem_pct + ' (' + shape[0].properties.dem_ct + ' votes)</h3>' + '<h3>Republican vote: ' + shape[0].properties.rep_pct + ' (' + shape[0].properties.rep_ct + ' votes)</h3>';
       } else {
         document.getElementById('pd').innerHTML = '<h3>Hover over a precinct!</h3>';
       }

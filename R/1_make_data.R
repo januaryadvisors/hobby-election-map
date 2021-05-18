@@ -46,6 +46,7 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
     )
   ) %>% 
   dplyr::select(Pct, Year, db_diff, sp_diff, 
+                db_dem.ct=DB_Dem, db_rep.ct = DB_Rep, sp_dem.ct = `Sen/Pre_Dem`, sp_rep.ct = `Sen/Pre_Rep`,
                 db_dem.pct=DB_Dem_pct, db_rep.pct=DB_Rep_pct, sp_dem.pct="Sen/Pre_Dem_pct", sp_rep.pct="Sen/Pre_Rep_pct",
                 db_description, sp_description) %>% 
   gather(election, values, db_diff:sp_description) %>% 
@@ -57,7 +58,8 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
     diff=as.numeric(diff),
     dem.pct= paste0(round(as.numeric(dem.pct)), "%"),
     rep.pct= paste0(round(as.numeric(rep.pct)), "%"),
-    
+    dem.ct= str_trim(format(round(as.numeric(dem.ct)), big.mark=",")),
+    rep.ct= str_trim(format(round(as.numeric(rep.ct)), big.mark=",")),
     ) %>% 
   arrange(Pct, election, Year) %>% 
   group_by(Pct, election) %>% 
@@ -75,7 +77,7 @@ df <- readxl::read_excel(here::here("data", "Updated Precinct Voting Data for Ha
       TRUE ~ year_array
     )
   ) %>% 
-  dplyr::rename(dem_pct = dem.pct, rep_pct = rep.pct)
+  dplyr::rename(dem_pct = dem.pct, rep_pct = rep.pct, dem_ct = dem.ct, rep_ct = rep.ct)
 
   
 
@@ -89,7 +91,7 @@ sf <- read_sf(here::here("data", "Harris_County_Voting_Precincts.shp")) %>%
 combined <- left_join(sf, df, by="Pct") %>% 
   geojson_json(.) %>% ms_simplify(.) 
 
-geojson_write(combined, file = here::here("data", paste0("mapdata", ".json")))
+#geojson_write(combined, file = here::here("data", paste0("mapdata", ".json")))
 geojson_write(combined, file = here::here(paste0("mapdata", ".json")))
 
 
